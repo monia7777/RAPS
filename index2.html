@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Europe</title>
+    
+    <style>
+        body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(230, 228, 228); /* Fallback color */
+       /* background-color: rgba(0,0,0,0.4);  Black w/ opacity */
+        
+        padding-top: 60px;
+}
+
+/* Modal Content/Box */
+        .modal-content {
+        background-color: #fefefe;
+        margin: 5px auto; /* 15% from the top and centered */
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+}
+
+        .velikaSlova{
+        font-size: large;
+        text-align: center;
+        padding-bottom: 1cm;
+}
+
+
+/* The Close Button */
+        .close {
+  
+        position: absolute;
+        right: 25px;
+        top: 0;
+        color: #000;
+        font-size: 35px;
+        font-weight: bold;
+}
+
+        .centrirano-dugme {
+        margin-top: 10px;
+        }
+
+        .container {
+        padding: 16px;
+        text-align: center;
+}
+
+        .form-container {
+            
+            text-align: center;
+            align-self: center;
+            justify-content: center;
+        }
+
+        .forma{
+            background-color: #c2baf0;
+            
+            padding: 10px;
+            
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-family: Arial, sans-serif;
+            align-self: center;
+            text-align: center;
+            max-width: 400px; /* Postavlja maksimalnu širinu containera */
+            width: 100%; /* Osigurava da container zauzima 100% svoje maksimalne širine */
+            height: max-content;
+        }
+
+        .button-container {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        
+    
+}
+
+        
+    </style>
+</head>
+<body>
+    <br><br><br>
+    <div class="button-container">
+        <button onclick="document.getElementById('id01').style.display='block'" >Login</button>
+    </div>
+    
+    
+    
+    <div id="id01" class="modal">
+        <span onclick="document.getElementById('id01').style.display='none'"
+      class="close" title="Close Modal">&times;</span>
+    <form form id="myForm" onsubmit="klik(event)">
+
+       <div class="velikaSlova">
+        <label>LOG IN</label>
+       </div>
+        
+        <div class="form-container">
+
+                
+
+                <label for="fname" >First name: </label><br><br>
+                <input type="text" id="fname" name="fname" placeholder="ime" onblur="provjeriIme()"><br><br>
+        
+                <label for="lname" >Last name:</label><br><br>
+                <input type="text" id="lname" name="lname" placeholder="prezime"><br><br>
+
+                <label for="mail" >Email:</label><br><br>
+                <input type="text" id="mail" name="mail" onblur="provjeriEmail()"><br><br>
+        
+                <label for="pass" >Pasword: </label><br><br>
+                <input type="password" id="pass" placeholder="šifra" required><br><br>
+                
+                <label for="ident" >Ponovi password: </label><br><br>
+                <input type="password" id="ident" required onkeyup="provjeriLozinku()">
+
+             
+                
+                <div class="centrirano-dugme">
+                    <input type="submit" id="123" value="submit" disabled >
+                </div>
+                                
+            
+                
+
+        </div>
+        <div class="container">
+            <button type="button" onclick="document.getElementById('id01').style.display='none'" >Cancel</button>
+        </div>
+    </form>
+    
+    </div>
+    <br><br>
+
+    <div class="forma">
+
+            <h1 id="Title"></h1>
+            <label for="file">Izaberite željeni izvor:</label>
+            <select id="file">
+                <option value="education.csv" data-name="Obrazovanost(%)">Obrazovanost(%)</option>        
+                <option value="incl.csv" data-name="Društvena inkluzija(%)">Društvena inkluzija(%)</option>
+                <option value="earnings.csv" data-name="Zarada(%)">Zarada(%)</option>
+            </select>
+            <br><br>
+            <label for="country">Kratki kod države(HR):</label><br>
+            <input type="text" id="country">
+            <br><br>
+            <label for="sex">Spol(M/F):</label><br>
+            <input type="text" id="sex">
+            <br><br>
+            <label for="year">Godina:</label><br>
+            <input type="text" id="year">
+            <br><br>
+            <button id="submitBtn" onclick="parseCSV()" disabled>Submit</button>  <button id="infoBtn" onclick="porukica()" style="border: none; border-radius: 70%;">?</button>
+            <h2>Results:</h2>
+            <div id="results"></div>
+        
+    
+    </div>
+    
+   <!--<script src="klijentsko.js"></script>--> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <script>
+        
+
+
+function provjeriPolja() {
+    const fname = document.getElementById('fname').value;
+    const lname = document.getElementById('lname').value;
+    const mail = document.getElementById('mail').value;
+    const pass = document.getElementById('pass').value;
+    const ident = document.getElementById('ident').value;
+    const submitBtn = document.getElementById('123');
+
+    if (fname === '' || lname === '' || mail === '' || pass === '' || ident === '') {
+        submitBtn.disabled = true;
+    } else {
+        submitBtn.disabled = false;
+    }
+}
+
+// Add event listeners to form fields
+document.getElementById('fname').addEventListener('input', provjeriPolja);
+document.getElementById('lname').addEventListener('input', provjeriPolja);
+document.getElementById('mail').addEventListener('input', provjeriPolja);
+document.getElementById('pass').addEventListener('input', provjeriPolja);
+document.getElementById('ident').addEventListener('input', provjeriPolja);
+
+// Initially check form fields when the page loads
+provjeriPolja();
+
+function porukica(){
+    alert("Trebate se prvo prijaviti");
+}
+function provjeriIme(){
+    const provjeraIme=document.getElementById("fname");
+    const submitBtn=document.getElementById("123");
+
+    if(provjeraIme.value.length>=2){
+        submitBtn.disabled=false;
+    }
+    else{
+        submitBtn.disabled=true;
+        alert("Ime treba imati 2 ili više znaka!");
+    }
+}
+
+
+function provjeriLozinku(){
+    var lozinka=document.getElementById('pass').value;
+    var ponovljena=document.getElementById('ident').value;
+    var dugme=document.getElementById('123');
+   
+    if(lozinka==ponovljena)
+        {
+            
+            dugme.disabled=false;
+            
+        }
+    else{
+        
+        dugme.disabled=true;
+        
+        
+    }
+}
+
+function provjeriEmail() {
+    const emailInput = document.getElementById('mail');
+    const submitButton = document.getElementById('123');
+    const email = emailInput.value;
+
+    // Make an AJAX request to check if the email exists
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://praksa-426213.lm.r.appspot.com/check-email', true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.exists) {
+                alert('Email already exists. Please use a different email.');
+                emailInput.value = '';
+                submitButton.disabled = true;
+            } else {
+                
+                submitButton.disabled = false;
+                
+            }
+        }
+    };
+    xhr.send(JSON.stringify({ email: email }));
+}
+
+
+
+
+
+
+function klik(event){
+    event.preventDefault();
+    var i=document.getElementById("fname").value;
+    
+    var pw=document.getElementById("pass").value;
+    var pr=document.getElementById("lname").value;
+    var em=document.getElementById("mail").value;
+    var Id=document.getElementById("ident").value;
+    var submitButton = document.getElementById('123');
+
+    
+    
+
+    var podaci ={
+        FirstName: i,
+        LastName: pr,
+        passw: pw,
+        email:em,
+        IdentificationNumber:Id
+    }
+
+    
+
+    fetch('https://praksa-426213.lm.r.appspot.com', {
+        method:'POST',
+        headers:{
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(podaci),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+             
+            document.getElementById('id01').style.display = 'none';
+            
+            document.getElementById('id02').style.display = 'block';
+        } else {
+            alert('Greška prilikom prijave');
+        }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+            var dok = document.getElementById('myForm');
+            dok.reset();
+   
+   
+    document.getElementById('submitBtn').disabled=false;
+    alert('Uspješno ste se prijavili');
+    document.getElementById('id01').style.display='none'  //ovo je zadnje
+}
+
+
+
+
+
+const parseCSV = () => {
+    const file = document.getElementById('file').value;
+    const countryCode = document.getElementById('country').value;
+    const sex = document.getElementById('sex').value;
+    const year = document.getElementById('year').value;
+    const resultsDiv = document.getElementById('results');
+
+    // Define the path to the selected CSV file
+    const filePath = `/static/${file}`;
+
+
+    //naslov
+    const selectElement = document.getElementById('file');
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const optionName = selectedOption.getAttribute('data-name');
+    let Naslov=document.getElementById('Title');
+    Naslov.innerHTML = "";
+    Naslov.innerHTML=optionName;
+    
+
+    
+
+    fetch(filePath)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(data => {
+            Papa.parse(data, {
+                header: true,
+                complete: (results) => {
+                    // Filter data by GEO (country code), SEX, and TIME_PERIOD (year)
+                    const filteredData = results.data.filter(record =>
+                        record.geo === countryCode && record.sex === sex && record.TIME_PERIOD === year
+                    );
+
+                    if (filteredData.length === 0) {
+                        resultsDiv.innerHTML = `nema podataka za državu: ${countryCode}, spol: ${sex}, i godinu: ${year}`;
+                    } else {
+                        let html = '<ul>';
+                        filteredData.forEach(record => {
+                            html += ` ${record.OBS_VALUE}`;
+                        });
+                        html += '</ul>';
+                        resultsDiv.innerHTML = html;
+                    }
+                },
+                error: (error) => {
+                    resultsDiv.innerHTML = `Error parsing the CSV data: ${error.message}`;
+                }
+            });
+        })
+        .catch(error => {
+            resultsDiv.innerHTML = `Error fetching the file: ${error.message}`;
+        });
+
+
+    
+};
+
+
+
+
+
+
+
+    </script>
+    
+</body>
+</html>
