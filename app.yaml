@@ -1,0 +1,9 @@
+runtime: nodejs22
+env: standard
+
+handlers:
+  - url: /static/(.*)
+    static_files: static/\1
+    upload: static/(.*)
+  - url: /.*
+    script: auto
