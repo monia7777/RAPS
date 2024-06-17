@@ -88,4 +88,4 @@ app.listen(port, () =>{
     console.log(`port je pokrenut na ${port}`);
 })
 
-//http://127.0.0.1:8081/index1.html
+//http://127.0.0.1:8081/index1.html projekt1/index1.html
