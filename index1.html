@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hallo</title>
+    <title>Data Europe</title>
     
     <style>
         body {
@@ -184,71 +184,6 @@
         
 
 
-function porukica(){
-    alert("Trebate se prvo prijaviti");
-}
-function provjeriIme(){
-    const provjeraIme=document.getElementById("fname");
-    const submitBtn=document.getElementById("123");
-
-    if(provjeraIme.value.length>=2){
-        submitBtn.disabled=false;
-    }
-    else{
-        submitBtn.disabled=true;
-        alert("Ime treba imati 2 ili više znaka!");
-    }
-}
-
-
-function provjeriLozinku(){
-    var lozinka=document.getElementById('pass').value;
-    var ponovljena=document.getElementById('ident').value;
-
-   
-    if(lozinka!==ponovljena)
-        {
-            
-            let dugme=document.getElementById('123');
-            dugme.disabled=true;
-            
-        }
-    else{
-        let dugme=document.getElementById('123');
-        dugme.disabled=false;
-        
-    }
-}
-
-function provjeriEmail() {
-    const emailInput = document.getElementById('mail');
-    const submitButton = document.getElementById('123');
-    const email = emailInput.value;
-
-    // Make an AJAX request to check if the email exists
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'https://csvparser-426016.ey.r.appspot.com/check-email', true);
-    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            const response = JSON.parse(xhr.responseText);
-            if (response.exists) {
-                alert('Email already exists. Please use a different email.');
-                emailInput.value = '';
-                submitButton.disabled = true;
-            } else {
-                
-                submitButton.disabled = false;
-                
-            }
-        }
-    };
-    xhr.send(JSON.stringify({ email: email }));
-}
-
-
-
-
 function provjeriPolja() {
     const fname = document.getElementById('fname').value;
     const lname = document.getElementById('lname').value;
@@ -274,6 +209,73 @@ document.getElementById('ident').addEventListener('input', provjeriPolja);
 // Initially check form fields when the page loads
 provjeriPolja();
 
+function porukica(){
+    alert("Trebate se prvo prijaviti");
+}
+function provjeriIme(){
+    const provjeraIme=document.getElementById("fname");
+    const submitBtn=document.getElementById("123");
+
+    if(provjeraIme.value.length>=2){
+        submitBtn.disabled=false;
+    }
+    else{
+        submitBtn.disabled=true;
+        alert("Ime treba imati 2 ili više znaka!");
+    }
+}
+
+
+function provjeriLozinku(){
+    var lozinka=document.getElementById('pass').value;
+    var ponovljena=document.getElementById('ident').value;
+    var dugme=document.getElementById('123');
+   
+    if(lozinka==ponovljena)
+        {
+            
+            dugme.disabled=false;
+            
+        }
+    else{
+        
+        dugme.disabled=true;
+        
+        
+    }
+}
+
+function provjeriEmail() {
+    const emailInput = document.getElementById('mail');
+    const submitButton = document.getElementById('123');
+    const email = emailInput.value;
+
+    // Make an AJAX request to check if the email exists
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://strucnapraksa-426615.lm.r.appspot.com/check-email', true);
+    xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const response = JSON.parse(xhr.responseText);
+            if (response.exists) {
+                alert('Email already exists. Please use a different email.');
+                emailInput.value = '';
+                submitButton.disabled = true;
+            } else {
+                
+                submitButton.disabled = false;
+                
+            }
+        }
+    };
+    xhr.send(JSON.stringify({ email: email }));
+}
+
+
+
+
+
+
 function klik(event){
     event.preventDefault();
     var i=document.getElementById("fname").value;
@@ -282,7 +284,11 @@ function klik(event){
     var pr=document.getElementById("lname").value;
     var em=document.getElementById("mail").value;
     var Id=document.getElementById("ident").value;
+    var submitButton = document.getElementById('123');
+
     
+    
+
     var podaci ={
         FirstName: i,
         LastName: pr,
@@ -293,7 +299,7 @@ function klik(event){
 
     
 
-    fetch('https://csvparser-426016.ey.r.appspot.com', {
+    fetch('https://strucnapraksa-426615.lm.r.appspot.com', {
         method:'POST',
         headers:{
             'Content-Type': 'application/json',
